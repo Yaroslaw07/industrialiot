@@ -1,5 +1,0 @@
-{
-  "OPT_CONNECTION_STRING": "opc.tcp://localhost:4840/",
-  "AZURE_IOT_CONNECTION_STRING": "HostName=industriaHub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=5DzRJvMNCPNob3abUgT9WvhH3KBDPDq1IAIoTP3LOhI=",
-  "DEVICES": []
-}
