@@ -1,0 +1,12 @@
+{
+  "Devices": [
+    {
+      "opcNodeId": "ns=2;s=Device 1",
+      "azureDeviceId": "Device1"
+    },
+    {
+      "opcNodeId": "ns=2;s=Device 2",
+      "azureDeviceId": "Device2"
+    }
+  ]
+}

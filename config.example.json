@@ -1,5 +1,0 @@
-{
-	"OPT_CONNECTION_STRING": "opc.tcp://localhost:4840/",
-	"AZURE_IOT_CONNECTION_STRING": "<AZURE_CONNECT_STRING>",
-	"DEVICES": []
-}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Devices;
 using Microsoft.Azure.Devices.Common.Exceptions;
+using Microsoft.Azure.Devices.Shared;
 
 namespace IndustrialiotConsole
 {
@@ -39,6 +40,27 @@ namespace IndustrialiotConsole
             message.MessageId = Guid.NewGuid().ToString();
             await _client.SendAsync(deviceId, message);
         }
+
+        public async Task<Twin> GetDeviceTwinAsync(string deviceId)
+        {
+            var twin =  await _registryManager.GetTwinAsync(deviceId);
+            return twin;
+        }
+
+        public async Task SetDeviceTwinDesiredPropAsync(string deviceId, string propName, string propValue)
+        {   
+            var twin = await GetDeviceTwinAsync(deviceId);
+            twin.Properties.Desired[propName] = propValue;
+            await _registryManager.UpdateTwinAsync(twin.DeviceId,twin,twin.ETag);
+        } 
+
+        public async Task SetDeviceTwinRepotedPropAsync(string deviceId, string propName, string propValue)
+        {
+            var twin = await GetDeviceTwinAsync(deviceId);
+            twin.Properties.Reported[propName] = propValue;
+            await _registryManager.UpdateTwinAsync(twin.DeviceId, twin, twin.ETag);
+        }
+
 
         public async Task DeleteDeviceAsync(string deviceId)
         {
