@@ -1,39 +1,36 @@
-﻿using Microsoft.Azure.Devices;
-using Microsoft.Extensions.Configuration;
-using Opc.UaFx.Client;
-using IndustrialiotConsole;
+﻿using Microsoft.Extensions.Configuration;
 using Industrialiot.Lib;
 using Industrialiot.Lib.Data;
-using Industrialiot.Agent;
 
 var configuration = new ConfigurationBuilder()
             .AddUserSecrets<Program>()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("devices.json", optional: false)
             .Build();
 
+var opcConnectionString = configuration["OPC_CONNECTION_STRING"];
 var azureConnectionString = configuration["AZURE_IOT_CONNECTION_STRING"];
-var optConnectionString = configuration["OPT_CONNECTION_STRING"];
 
-var list = configuration.GetSection("Devices").Get<List<DeviceIndificator>>();
-if (list == null) list = new List<DeviceIndificator>();
+if (opcConnectionString == null || azureConnectionString == null)
+{
+    Console.Error.WriteLine("OPC_CONNECTION_STRING OR AZURE_IOT_CONNECTION_STRING IS NOT PROVIDED");
+    return;
+}
 
-var optClient = new OpcClient(optConnectionString);
+var list = configuration.GetSection("DEVICES").GetChildren()
+    .Select(d => new DeviceIdentifier(
+        d["deviceName"]!,
+        d["opcNodeId"]!,
+        d["azureDeviceId"]!))
+    .ToList();
 
-var iotHubClient = ServiceClient.CreateFromConnectionString(azureConnectionString);
-var iotHubRegister = RegistryManager.CreateFromConnectionString(azureConnectionString);
-var iotHub = new IoTHubManager(iotHubClient, iotHubRegister);
 
-var manager = new DeviceManager(optClient,iotHub, list);
+list ??= [];
 
-await manager.Start();
+if (list.Count() == 0)
+{
+    Console.WriteLine("DEVICES LIST ARE EMPTY");
+}
+
+var manager = new DeviceManager(opcConnectionString, azureConnectionString, list);
 Console.WriteLine("Agent is started");
 
-int input;
-
-do
-{
-    Menu.DisplayMenu();
-    input = Menu.ReadInput();
-    await Menu.Execute(input, manager);
-} while (true);
+while (true) ;

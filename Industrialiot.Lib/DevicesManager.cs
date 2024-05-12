@@ -1,81 +1,58 @@
 ﻿using Industrialiot.Lib.Data;
 using IndustrialiotConsole;
-using Microsoft.Azure.Amqp.Framing;
-using Microsoft.Azure.Devices;
+using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
-using Opc.UaFx;
-using Opc.UaFx.Client;
 using System.Text;
 
 namespace Industrialiot.Lib
 {
-    public class DeviceManager(OpcClient _client, IoTHubManager _iotHubManager, List<DeviceIndificator> _deviceIndificators)
+    public class DeviceManager
     {
-        CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        OpcManager _opcManager;
+        AzureIoTManager _azureIotManager;
 
-        public async Task Start()
-        {
-            await PeiodicSendingMetadata(TimeSpan.FromSeconds(10));
-        }
+        List<string> _deviceNames;
 
-        public void Stop()
+        public DeviceManager(string opcConnectionString, string azureConnectionString, List<DeviceIdentifier> deviceIdentifierList)
         {
-           _cancellationTokenSource.Cancel();
+            _opcManager = new OpcManager(opcConnectionString, deviceIdentifierList);
+            Console.WriteLine("opcCreated");
+            _azureIotManager = new AzureIoTManager(azureConnectionString, deviceIdentifierList);
+
+            _deviceNames = deviceIdentifierList.Select(device => device.deviceName).ToList();
+
+            PeiodicSendingMetadata(TimeSpan.FromSeconds(10));
         }
 
         private async Task PeiodicSendingMetadata(TimeSpan interval)
         {
             while (true)
             {
-                await SendDevicesMetadata();
-                await Task.Delay(interval, _cancellationTokenSource.Token);
+                await SendMachinesMetadata();
+                await Task.Delay(interval);
             }
         }
 
         public async Task SendMachinesMetadata()
         {
-            _client.Connect();
-
             var tasks = new List<Task>();
 
-            foreach (var indificator in _deviceIndificators)
-            {
-                var fields = GetSingleMachineMetadata(indificator.opcNodeId);
+            _opcManager.Connect();
 
-                var dataString = JsonConvert.SerializeObject(fields);
+            foreach (var deviceName in _deviceNames)
+            {
+                var deviceMetadata = _opcManager.GetDeviceMetadata(deviceName);
+
+                var dataString = JsonConvert.SerializeObject(deviceMetadata);
                 Message msg = new Message(Encoding.UTF8.GetBytes(dataString));
 
-                var task =  _iotHubManager.SendMessageAsync(msg, indificator.azureDeviceId);
+                var task =  _azureIotManager.sendMessage(msg, deviceName);
                 tasks.Add(task);
             }
 
             await Task.WhenAll(tasks);
-            
-            _client.Disconnect();
-        }
 
-        private DeviceMetadata GetSingleMachineMetadata(string machineName)
-        {
-            var props = typeof(DeviceMetadata).GetProperties();
-
-            List<OpcReadNode> commands = new List<OpcReadNode>();
-
-            foreach (var prop in props)
-            {
-                commands.Add(new OpcReadNode(machineName + "/" + prop.Name));
-            }
-
-            var data = _client.ReadNodes(commands.ToArray()).ToArray();
-
-            var productionStatus = (int)data[0].Value; 
-            var workorderId = (string)data[1].Value;
-            var goodCount = (long)data[2].Value;
-            var badCount = (long)data[3].Value;
-            var temperature = (double)data[4].Value;
-
-            var metadata = new DeviceMetadata(productionStatus, workorderId, goodCount, badCount, temperature);
-
-            return metadata;
+            _opcManager.Disconnect();
         }
     }
 }

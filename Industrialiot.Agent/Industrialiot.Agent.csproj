@@ -22,10 +22,4 @@
     <ProjectReference Include="..\Industrialiot.Lib\Industrialiot.Lib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="devices.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
