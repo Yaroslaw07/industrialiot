@@ -33,4 +33,6 @@ if (list.Count() == 0)
 var manager = new DeviceManager(opcConnectionString, azureConnectionString, list);
 Console.WriteLine("Agent is started");
 
+manager.Start();
+
 while (true) ;

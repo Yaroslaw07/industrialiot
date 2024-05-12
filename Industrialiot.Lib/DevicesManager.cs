@@ -4,14 +4,20 @@ using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
 using System.Text;
 
+
 namespace Industrialiot.Lib
 {
+
     public class DeviceManager
     {
+        const int DELAY_TIME = 10;
+
         OpcManager _opcManager;
         AzureIoTManager _azureIotManager;
 
         List<string> _deviceNames;
+
+        CancellationTokenSource? _cancellationTokenSource;
 
         public DeviceManager(string opcConnectionString, string azureConnectionString, List<DeviceIdentifier> deviceIdentifierList)
         {
@@ -21,7 +27,18 @@ namespace Industrialiot.Lib
 
             _deviceNames = deviceIdentifierList.Select(device => device.deviceName).ToList();
 
-            PeiodicSendingMetadata(TimeSpan.FromSeconds(10));
+            SetDesiredProductionRateOnMachines();
+        }
+
+        public async void Start()
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+            await PeiodicSendingMetadata(TimeSpan.FromSeconds(DELAY_TIME));
+        }
+
+        public void Stop()
+        {
+            _cancellationTokenSource?.Cancel();
         }
 
         private async Task PeiodicSendingMetadata(TimeSpan interval)
@@ -29,7 +46,7 @@ namespace Industrialiot.Lib
             while (true)
             {
                 await SendMachinesMetadata();
-                await Task.Delay(interval);
+                await Task.Delay(interval, _cancellationTokenSource!.Token);
             }
         }
 
@@ -53,6 +70,23 @@ namespace Industrialiot.Lib
             await Task.WhenAll(tasks);
 
             _opcManager.Disconnect();
+        }
+
+        public async void SetDesiredProductionRateOnMachines()
+        {
+            foreach (var deviceName in _deviceNames)
+            {
+                var desired = await _azureIotManager.GetTwinDesiredProps(deviceName);
+
+                if (!desired.Contains("productionRate"))
+                {
+                    continue;
+                }
+
+                var desiredProductionRate = desired["productionRate"].Value;
+
+                _opcManager.SetDeviceProductionRate(deviceName, (int)desiredProductionRate);
+            }
         }
     }
 }

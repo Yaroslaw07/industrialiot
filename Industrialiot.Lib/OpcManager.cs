@@ -30,19 +30,19 @@ public class OpcManager
         _client.Disconnect();
     }
 
+    private string GetDeviceOpcNodeId(string deviceName)
+    {
+        var res = _devices[deviceName];
+
+        return res == null ? throw new Exception($"NOT OPC_CONNECTION FOR {deviceName}") : res;
+    }
+
     public DeviceMetadata? GetDeviceMetadata(string deviceName)
     {
         var props = typeof(DeviceMetadata).GetProperties();
-
         List<OpcReadNode> commands = new List<OpcReadNode>();
 
-        string optNodeId = _devices[deviceName];
-
-        if (optNodeId == null)
-        {
-            Console.Error.WriteLine("NOT OPC_CONNECTION FOR" +  optNodeId);
-            return null;
-        }
+        string optNodeId = GetDeviceOpcNodeId(deviceName);
 
         foreach (var prop in props)
         {
@@ -60,5 +60,17 @@ public class OpcManager
         var metadata = new DeviceMetadata(productionStatus, workorderId, goodCount, badCount, temperature);
 
         return metadata;
+    }
+
+    public void SetDeviceProductionRate(string deviceName, int newValue)
+    {
+        var opcNodeId = GetDeviceOpcNodeId(deviceName);
+
+        var result = _client.WriteNode(opcNodeId + "/ProductionRate", newValue);
+
+        if (!result.IsGood)
+        {
+            throw new Exception($"CAN'T UPDATE PRODUCTION RATE FOR {opcNodeId}");
+        }
     }
 }
