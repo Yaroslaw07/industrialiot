@@ -20,7 +20,7 @@ namespace IndustrialiotConsole
 
                 if (client == null)
                 {
-                    Console.Error.WriteLine($"DEVICE: {device.deviceName} CAN'T BE GETTED FROM AZURE", device.deviceName);
+                    Console.Error.WriteLine($"DEVICE: {device.deviceName} CAN'T BE GETTED FROM AZURE");
                     continue;
                 }
 
@@ -32,7 +32,7 @@ namespace IndustrialiotConsole
             if (_devices.ContainsKey(deviceName))
                 return _devices[deviceName];
             else
-                throw new Exception($"No azure device client for {deviceName}");
+                throw new Exception($"No Azure device client for {deviceName}");
         }
 
         public async Task sendMessage(Message message, string deviceName) {
@@ -41,13 +41,29 @@ namespace IndustrialiotConsole
             await deviceClient.SendEventAsync(message);
         }
 
-
         public async Task<TwinCollection> GetTwinDesiredProps(string deviceName)
         {
             var deviceClient = GetDeviceClient(deviceName);
             var twin = await deviceClient.GetTwinAsync();
 
             return twin.Properties.Desired;
+        }
+
+        public async Task SetTwinReportedProp(string deviceName, string property, dynamic value) 
+        {
+            var deviceClient = GetDeviceClient(deviceName);
+
+            var reported = new TwinCollection();
+            reported[property] = value;
+
+            await deviceClient.UpdateReportedPropertiesAsync(reported);
+        }
+
+        public async Task SetDirectMethodHandler(string deviceName, string methodName, MethodCallback handler)
+        {
+            var deviceClient = GetDeviceClient(deviceName);
+
+            await deviceClient.SetMethodHandlerAsync(methodName, handler, new MethodUserContext(deviceName));
         }
     }
 }

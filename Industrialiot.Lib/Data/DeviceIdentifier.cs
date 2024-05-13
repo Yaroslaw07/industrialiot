@@ -2,7 +2,6 @@
 {
     public class DeviceIdentifier
     {
-
         public string deviceName { get; set; }
         public string opcNodeId { get; set; }
         public string azureDeviceConnection { get; set; }

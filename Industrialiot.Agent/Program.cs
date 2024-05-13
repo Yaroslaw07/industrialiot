@@ -23,15 +23,13 @@ var list = configuration.GetSection("DEVICES").GetChildren()
     .ToList();
 
 
-list ??= [];
-
-if (list.Count() == 0)
+if (list == null || list.Count() == 0)
 {
     Console.WriteLine("DEVICES LIST ARE EMPTY");
+    return;
 }
 
 var manager = new DeviceManager(opcConnectionString, azureConnectionString, list);
-Console.WriteLine("Agent is started");
 
 manager.Start();
 
