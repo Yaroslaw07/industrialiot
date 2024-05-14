@@ -39,32 +39,25 @@ public class OpcManager
     {
         var res = _devices[deviceName];
 
-        return res ?? throw new Exception($"NOT OPC_CONNECTION FOR {deviceName}");
+        return res ?? throw new Exception($"NOT OPC CONNECTION FOR {deviceName}");
     }
 
-    public void SubscribeToProductionRateChange(string deviceName, OpcDataChangeReceivedEventHandler handler)
+    public void SubscribeToNodeDataChange(string deviceName, List<OpcDataChangeHandlerMapper> changeHandlers)
     {
+        if (changeHandlers.Count == 0) return;
+
         var opcNodeId = GetDeviceOpcNodeId(deviceName);
 
-        var item = new OpcMonitoredItem(opcNodeId + "/ProductionRate", OpcAttribute.Value);
+        foreach (var changeHandler in changeHandlers)
+        {
+            var item = new OpcMonitoredItem(opcNodeId + "/" + changeHandler.opcNodeDataName, OpcAttribute.Value);
 
-        item.Tag = deviceName;
-        item.DataChangeReceived += handler;
+            item.Tag = deviceName;
+            item.DataChangeReceived += changeHandler.handler;
 
-        _subscription.AddMonitoredItem(item);
-        _subscription.ApplyChanges();
-    }
-
-    public void SubscribeToDeviceErrorChange(string deviceName, OpcDataChangeReceivedEventHandler handler)
-    {
-        var opcNodeId = GetDeviceOpcNodeId(deviceName);
-
-        var item = new OpcMonitoredItem(opcNodeId + "/DeviceError", OpcAttribute.Value);
-
-        item.Tag = deviceName;
-        item.DataChangeReceived += handler;
-
-        _subscription.AddMonitoredItem(item);
+            _subscription.AddMonitoredItem(item);
+        }
+        
         _subscription.ApplyChanges();
     }
 
@@ -93,7 +86,7 @@ public class OpcManager
         return metadata;
     }
 
-    public void SetDeviceVariable(string deviceName, string variableName, int newValue)
+    public void SetDeviceNodeData(string deviceName, string variableName, int newValue)
     {
         var opcNodeId = GetDeviceOpcNodeId(deviceName);
 

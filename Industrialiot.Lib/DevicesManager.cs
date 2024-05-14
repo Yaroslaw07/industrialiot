@@ -2,13 +2,11 @@
 using IndustrialiotConsole;
 using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
-using Opc.UaFx.Client;
 using System.Text;
-
 
 namespace Industrialiot.Lib
 {
-    public class DeviceManager
+    public partial class DevicesManager
     {
         const int DELAY_TIME_IN_SECONDS = 10;
 
@@ -19,7 +17,7 @@ namespace Industrialiot.Lib
 
         CancellationTokenSource? _cancellationTokenSource;
 
-        public DeviceManager(string opcConnectionString, string azureConnectionString, List<DeviceIdentifier> deviceIdentifierList)
+        public DevicesManager(string opcConnectionString, string azureConnectionString, List<DeviceIdentifier> deviceIdentifierList)
         {
             _opcManager = new OpcManager(opcConnectionString, deviceIdentifierList);
             _azureIotManager = new AzureIoTManager(azureConnectionString, deviceIdentifierList);
@@ -32,14 +30,12 @@ namespace Industrialiot.Lib
             _cancellationTokenSource = new CancellationTokenSource();
             _opcManager.Connect();
 
-            SubscribeDeviceErrorsChange();
-            SubsribeProductionRateChange();
+            SubscribeToDataNodeChanges();
 
             SetDesiredProductionRateOnMachines();
-
             SetDirectMethodsForAllDevices();
 
-            //await PeiodicSendingMetadata(TimeSpan.FromSeconds(DELAY_TIME_IN_SECONDS));
+            await PeiodicSendingMetadata(TimeSpan.FromSeconds(DELAY_TIME_IN_SECONDS));
         }
 
         public void Stop()
@@ -68,44 +64,35 @@ namespace Industrialiot.Lib
                 var dataString = JsonConvert.SerializeObject(deviceMetadata);
                 Message msg = new Message(Encoding.UTF8.GetBytes(dataString));
 
-                var task =  _azureIotManager.sendMessage(msg, deviceName);
+                var task = _azureIotManager.sendMessage(msg, deviceName);
                 tasks.Add(task);
             }
 
             await Task.WhenAll(tasks);
         }
 
-       
-        public void SubsribeProductionRateChange()
+
+        private void SubscribeToDataNodeChanges()
         {
+            var list = new List<OpcDataChangeHandlerMapper>{
+                new("ProductionRate",ProductionRateChangeHandler),
+                new("DeviceError",DeviceErrorChangeHandler)};
+
             foreach (var deviceName in _deviceNames)
-                _opcManager.SubscribeToProductionRateChange(deviceName, ProductionRateChangeHandler); 
+                _opcManager.SubscribeToNodeDataChange(deviceName,list);
         }
 
-        public void SubscribeDeviceErrorsChange()
+        private async void SetDirectMethodsForAllDevices()
         {
+            var tasks = new List<Task>();
+
             foreach (var deviceName in _deviceNames)
-                _opcManager.SubscribeToDeviceErrorChange(deviceName, DeviceErrorChangeHandler);
-        }
+            {
+                tasks.Add(_azureIotManager.SetDirectMethodHandler(deviceName, "emergencyStop", CallEmergencyStop));
+                tasks.Add(_azureIotManager.SetDirectMethodHandler(deviceName, "resetErrorStatus", CallReserErrorStatus));
+            }
 
-        private async void ProductionRateChangeHandler(object sender, OpcDataChangeReceivedEventArgs e)
-        {
-            var newValue = e.Item.Value.Value;
-            var deviceName = ((OpcMonitoredItem)sender).Tag.ToString();
-            await _azureIotManager.SetTwinReportedProp(deviceName!, "productionRate", newValue);
-        }
-
-        private async void DeviceErrorChangeHandler(object sender, OpcDataChangeReceivedEventArgs e)
-        {
-            var newValue = e.Item.Value.Value;
-            var deviceName = ((OpcMonitoredItem)sender).Tag.ToString();
-
-            DeviceErrors errors = (DeviceErrors)newValue;
-            var strErrors = DeviceErrorsConverter.ToMessage(errors);
-            Message msg = new Message(Encoding.UTF8.GetBytes(strErrors));
-
-            await _azureIotManager.sendMessage(msg, deviceName!);
-            await _azureIotManager.SetTwinReportedProp(deviceName!, "deviceErrors", newValue);
+            await Task.WhenAll(tasks);
         }
 
         public async void SetDesiredProductionRateOnMachines()
@@ -118,39 +105,8 @@ namespace Industrialiot.Lib
 
                 var desiredProductionRate = desired["productionRate"].Value;
 
-                _opcManager.SetDeviceVariable(deviceName,"ProductionRate",(int)desiredProductionRate);
+                _opcManager.SetDeviceNodeData(deviceName, "ProductionRate", (int)desiredProductionRate);
             }
-        }
-
-        private async void SetDirectMethodsForAllDevices()
-        {
-            var tasks = new List<Task>();
-            
-            foreach (var deviceName in _deviceNames)
-            {
-                tasks.Add(_azureIotManager.SetDirectMethodHandler(deviceName, "emergencyStop", CallEmergencyStop));
-                tasks.Add(_azureIotManager.SetDirectMethodHandler(deviceName, "resetErrorStatus", CallReserErrorStatus));
-            }
-
-            await Task.WhenAll(tasks);
-        }
-
-        private async Task<MethodResponse> CallEmergencyStop(MethodRequest methodRequest, object userContext)
-        {
-            var deviceName =  ((MethodUserContext)userContext).deviceName;
-
-            await Task.Run(() => _opcManager.CallDeviceMethod(deviceName, "EmergencyStop"));
-
-            return new MethodResponse(200);
-        }
-
-        private async Task<MethodResponse> CallReserErrorStatus(MethodRequest methodRequest, object userContext)
-        {
-            var deviceName = ((MethodUserContext)userContext).deviceName;
-
-            await Task.Run(() => _opcManager.CallDeviceMethod(deviceName, "ResetErrorStatus"));
-
-            return new MethodResponse(200);
         }
     }
 }

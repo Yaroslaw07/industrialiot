@@ -16,11 +16,23 @@ if (opcConnectionString == null || azureConnectionString == null)
 }
 
 var list = configuration.GetSection("DEVICES").GetChildren()
-    .Select(d => new DeviceIdentifier(
-        d["deviceName"]!,
-        d["opcNodeId"]!,
-        d["azureDeviceId"]!))
-    .ToList();
+    .Select(d => {
+        var deviceName = d["deviceName"];
+        var opcNodeId = d["opcNodeId"];
+        var azureDeviceId = d["azureDeviceId"];
+
+        if (opcNodeId == null || azureDeviceId == null || deviceName == null)
+        {
+            Console.Error.WriteLine($"{d} DON'T HAVE ENOUGH CONFIG DATA. IT WILL BE MISSED");
+            return null;
+        }
+
+        return new DeviceIdentifier(
+            deviceName,
+            opcNodeId,
+            azureDeviceId);
+    })
+    .Where(d => d != null).ToList();
 
 
 if (list == null || list.Count() == 0)
@@ -29,7 +41,7 @@ if (list == null || list.Count() == 0)
     return;
 }
 
-var manager = new DeviceManager(opcConnectionString, azureConnectionString, list);
+var manager = new DevicesManager(opcConnectionString, azureConnectionString, list);
 
 manager.Start();
 

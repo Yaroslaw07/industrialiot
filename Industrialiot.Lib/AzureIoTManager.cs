@@ -32,7 +32,7 @@ namespace IndustrialiotConsole
             if (_devices.ContainsKey(deviceName))
                 return _devices[deviceName];
             else
-                throw new Exception($"No Azure device client for {deviceName}");
+                throw new Exception($"NO AZURE DEVICE CLIENT FOUND FOR {deviceName}");
         }
 
         public async Task sendMessage(Message message, string deviceName) {
