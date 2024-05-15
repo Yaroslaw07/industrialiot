@@ -23,6 +23,7 @@ namespace Industrialiot.Lib
             _azureIotManager = new AzureIoTManager(azureConnectionString, deviceIdentifierList);
 
             _deviceNames = deviceIdentifierList.Select(device => device.deviceName).ToList();
+            _deviceErrors = [];
         }
 
         public async void Start()
@@ -30,10 +31,11 @@ namespace Industrialiot.Lib
             _cancellationTokenSource = new CancellationTokenSource();
             _opcManager.Connect();
 
+            SubscribeToDesiredChange();
             SubscribeToDataNodeChanges();
+            SetDirectMethodsForAllDevices();
 
             SetDesiredProductionRateOnMachines();
-            SetDirectMethodsForAllDevices();
 
             await PeiodicSendingMetadata(TimeSpan.FromSeconds(DELAY_TIME_IN_SECONDS));
         }
@@ -64,13 +66,12 @@ namespace Industrialiot.Lib
                 var dataString = JsonConvert.SerializeObject(deviceMetadata);
                 Message msg = new Message(Encoding.UTF8.GetBytes(dataString));
 
-                var task = _azureIotManager.sendMessage(msg, deviceName);
+                var task = _azureIotManager.sendMessage(msg, IotMessageTypes.Metadata, deviceName);
                 tasks.Add(task);
             }
 
             await Task.WhenAll(tasks);
         }
-
 
         private void SubscribeToDataNodeChanges()
         {
@@ -105,8 +106,20 @@ namespace Industrialiot.Lib
 
                 var desiredProductionRate = desired["productionRate"].Value;
 
-                _opcManager.SetDeviceNodeData(deviceName, "ProductionRate", (int)desiredProductionRate);
+                _opcManager.SetDeviceNodeData(deviceName, "ProductionRate", (int) desiredProductionRate);
             }
+        }
+
+        public async void SubscribeToDesiredChange()
+        {
+            var tasks = new List<Task>();
+
+            foreach (var deviceName in _deviceNames)
+            {
+                tasks.Add(_azureIotManager.SetDesiredPropertyUpdateCallback(deviceName, OnDesiredPropertyChanged));
+            }
+
+            await Task.WhenAll(tasks);
         }
     }
 }

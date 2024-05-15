@@ -1,6 +1,7 @@
 ﻿using Industrialiot.Lib.Data;
 using Microsoft.Azure.Devices.Client;
 using Microsoft.Azure.Devices.Shared;
+using System.Net.Mime;
 
 namespace IndustrialiotConsole
 {
@@ -35,8 +36,16 @@ namespace IndustrialiotConsole
                 throw new Exception($"NO AZURE DEVICE CLIENT FOUND FOR {deviceName}");
         }
 
-        public async Task sendMessage(Message message, string deviceName) {
+        public async Task sendMessage(Message message, IotMessageTypes MessageType, string deviceName) {
             var deviceClient = GetDeviceClient(deviceName);
+
+            string messageTypeString = "";
+            if (MessageType == IotMessageTypes.Metadata) messageTypeString = "Metadata";
+            if (MessageType == IotMessageTypes.DeviceError) messageTypeString = "DeviceError";
+
+            message.ContentType = MediaTypeNames.Application.Json;
+            message.ContentEncoding = "utf-8";
+            message.Properties.Add("type", messageTypeString);
 
             await deviceClient.SendEventAsync(message);
         }
@@ -47,6 +56,14 @@ namespace IndustrialiotConsole
             var twin = await deviceClient.GetTwinAsync();
 
             return twin.Properties.Desired;
+        }
+
+        public async Task<TwinCollection> GetTwinReportedProps(string deviceName)
+        {
+            var deviceClient = GetDeviceClient(deviceName);
+            var twin = await deviceClient.GetTwinAsync();
+
+            return twin.Properties.Reported;
         }
 
         public async Task SetTwinReportedProp(string deviceName, string property, dynamic value) 
@@ -64,6 +81,13 @@ namespace IndustrialiotConsole
             var deviceClient = GetDeviceClient(deviceName);
 
             await deviceClient.SetMethodHandlerAsync(methodName, handler, new MethodUserContext(deviceName));
+        }
+
+        public async Task SetDesiredPropertyUpdateCallback(string deviceName, DesiredPropertyUpdateCallback handler)
+        {
+            var deviceClient = GetDeviceClient(deviceName);
+
+            await deviceClient.SetDesiredPropertyUpdateCallbackAsync(handler, new MethodUserContext(deviceName));
         }
     }
 }
