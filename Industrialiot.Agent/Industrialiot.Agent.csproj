@@ -18,8 +18,4 @@
     <PackageReference Include="Opc.UaFx.Client" Version="2.41.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Industrialiot.Lib\Industrialiot.Lib.csproj" />
-  </ItemGroup>
-
 </Project>

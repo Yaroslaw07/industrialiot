@@ -1,4 +1,4 @@
-﻿namespace Industrialiot.Lib.Data
+﻿namespace Industrialiot.Agent.Data.Entities
 {
     public class DeviceIdentifier
     {
@@ -6,7 +6,7 @@
         public string opcNodeId { get; set; }
         public string azureDeviceConnection { get; set; }
 
-        public DeviceIdentifier(string deviceName,string opcNodeId, string azureDeviceConnection)
+        public DeviceIdentifier(string deviceName, string opcNodeId, string azureDeviceConnection)
         {
             this.deviceName = deviceName;
             this.opcNodeId = opcNodeId;

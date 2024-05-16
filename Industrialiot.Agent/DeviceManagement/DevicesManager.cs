@@ -1,17 +1,20 @@
-﻿using Industrialiot.Lib.Data;
-using IndustrialiotConsole;
+﻿using Industrialiot.Agent.AzureIoT;
+using Industrialiot.Agent.Common;
+using Industrialiot.Agent.Data.Entities;
+using Industrialiot.Agent.Opc;
+
 using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
 using System.Text;
 
-namespace Industrialiot.Lib
+namespace Industrialiot.Agent.DeviceManagment
 {
     public partial class DevicesManager
     {
         const int DELAY_TIME_IN_SECONDS = 10;
 
-        OpcManager _opcManager;
-        AzureIoTManager _azureIotManager;
+        private OpcManager _opcManager;
+        private AzureIoTManager _azureIotManager;
 
         List<string> _deviceNames;
 
@@ -66,7 +69,7 @@ namespace Industrialiot.Lib
                 var dataString = JsonConvert.SerializeObject(deviceMetadata);
                 Message msg = new Message(Encoding.UTF8.GetBytes(dataString));
 
-                var task = _azureIotManager.sendMessage(msg, IotMessageTypes.Metadata, deviceName);
+                var task = _azureIotManager.sendMessage(msg, IotMessageTypes.Telemetry, deviceName);
                 tasks.Add(task);
             }
 

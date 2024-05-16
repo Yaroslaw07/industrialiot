@@ -1,7 +1,7 @@
-﻿using Industrialiot.Lib.Data;
+﻿using Industrialiot.Agent.Data;
 using Microsoft.Azure.Devices.Client;
 
-namespace Industrialiot.Lib
+namespace Industrialiot.Agent.DeviceManagment
 {
     partial class DevicesManager
     {

@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using Industrialiot.Lib;
-using Industrialiot.Lib.Data;
+﻿using Industrialiot.Agent.Data.Entities;
+using Industrialiot.Agent.DeviceManagment;
+using Microsoft.Extensions.Configuration;
 
 var configuration = new ConfigurationBuilder()
             .AddUserSecrets<Program>()

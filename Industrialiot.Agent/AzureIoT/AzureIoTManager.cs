@@ -1,9 +1,11 @@
-﻿using Industrialiot.Lib.Data;
+﻿using Industrialiot.Agent.Common;
+using Industrialiot.Agent.Data;
+using Industrialiot.Agent.Data.Entities;
 using Microsoft.Azure.Devices.Client;
 using Microsoft.Azure.Devices.Shared;
 using System.Net.Mime;
 
-namespace IndustrialiotConsole
+namespace Industrialiot.Agent.AzureIoT
 {
     class AzureIoTManager {
 
@@ -40,7 +42,7 @@ namespace IndustrialiotConsole
             var deviceClient = GetDeviceClient(deviceName);
 
             string messageTypeString = "";
-            if (MessageType == IotMessageTypes.Metadata) messageTypeString = "Metadata";
+            if (MessageType == IotMessageTypes.Telemetry) messageTypeString = "Telemetry";
             if (MessageType == IotMessageTypes.DeviceError) messageTypeString = "DeviceError";
 
             message.ContentType = MediaTypeNames.Application.Json;

@@ -1,8 +1,8 @@
-﻿using Industrialiot.Lib.Data;
+﻿using Industrialiot.Agent.Data.Entities;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
-namespace Industrialiot.Lib;
+namespace Industrialiot.Agent.Opc;
 
 public class OpcManager
 {

@@ -1,8 +1,8 @@
-﻿namespace Industrialiot.Lib.Data
+﻿namespace Industrialiot.Agent.Common
 {
     public enum IotMessageTypes
     {
-        Metadata,
+        Telemetry,
         DeviceError
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Opc.UaFx.Client;
 
-namespace Industrialiot.Lib.Data
+namespace Industrialiot.Agent.Opc
 {
     public class OpcDataChangeHandlerMapper
     {

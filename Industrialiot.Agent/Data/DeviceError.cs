@@ -1,4 +1,4 @@
-﻿namespace Industrialiot.Lib.Data
+﻿namespace Industrialiot.Agent.Data
 {
     [Flags]
     public enum DeviceError
@@ -19,7 +19,7 @@
 
             while (value != 0)
             {
-                count += (uint)(value & 1);
+                count += value & 1;
                 value >>= 1;
             }
 

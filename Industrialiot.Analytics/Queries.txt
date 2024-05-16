@@ -1,0 +1,46 @@
+SELECT
+    IoTHub.ConnectionDeviceId,
+    System.Timestamp AS CurrentTime,
+    SUM(GoodCount) AS GoodCount,
+    SUM(GoodCount + BadCount) AS TotalVolume,
+    1.0 * SUM(GoodCount) / SUM(GoodCount + BadCount) AS GoodProductionPercentage
+INTO
+    [output]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue(industriaHub, '[User].[type]') = 'Telemetry'
+GROUP BY
+    TumblingWindow(minute, 5), IoTHub.ConnectionDeviceId;
+
+
+SELECT
+    IoTHub.ConnectionDeviceId,
+    System.Timestamp AS CurrentTime,
+    AVG(Temperature) AS AvgTemperature,
+    MIN(Temperature) AS MinTemperature,
+    MAX(Temperature) AS MaxTemperature
+INTO
+    [output]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue(industriaHub, '[User].[type]') = 'Telemetry'
+GROUP BY
+    HoppingWindow(minute, 5, 1), IoTHub.ConnectionDeviceId;
+
+
+
+SELECT
+    IoTHub.ConnectionDeviceId,
+    System.Timestamp AS CurrentTime
+INTO
+    [output]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue(industriaHub, '[User].[type]') = 'DeviceError'
+GROUP BY
+    SlidingWindow(minute, 1), IoTHub.ConnectionDeviceId
+HAVING
+    COUNT(newErrorsCount) > 3

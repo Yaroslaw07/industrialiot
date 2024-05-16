@@ -1,20 +1,12 @@
-﻿using Industrialiot.Lib.Data;
+﻿using Industrialiot.Agent.Data;
 using Microsoft.Azure.Devices.Shared;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Industrialiot.Lib
+namespace Industrialiot.Agent.DeviceManagment
 {
     partial class DevicesManager
     {
         private async Task OnDesiredPropertyChanged(TwinCollection desiredProperties, object userContext)
         {
-            Console.WriteLine("onDesired", desiredProperties["productionRate"].Value);
-
             var value = desiredProperties["productionRate"].Value;
 
             var deviceName = ((MethodUserContext)userContext).deviceName;

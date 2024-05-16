@@ -1,10 +1,12 @@
-﻿using Industrialiot.Lib.Data;
+﻿using Industrialiot.Agent.Common;
+using Industrialiot.Agent.Data;
+using Industrialiot.Agent.Data.Messages;
 using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
 using Opc.UaFx.Client;
 using System.Text;
 
-namespace Industrialiot.Lib
+namespace Industrialiot.Agent.DeviceManagment
 {
     partial class DevicesManager
     {

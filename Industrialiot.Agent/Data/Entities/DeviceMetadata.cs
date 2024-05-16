@@ -1,4 +1,4 @@
-﻿namespace Industrialiot.Lib.Data
+﻿namespace Industrialiot.Agent.Data.Entities
 {
     sealed public record DeviceMetadata
     {
