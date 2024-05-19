@@ -1,0 +1,99 @@
+﻿/*
+Production Rate
+*/
+
+SELECT
+    IoTHub.ConnectionDeviceId,
+    System.Timestamp AS CurrentTime,
+    SUM(GoodCount) AS GoodCount,
+    SUM(GoodCount + BadCount) AS TotalVolume,
+    1.0 * SUM(GoodCount) / SUM(GoodCount + BadCount) AS GoodProductionPercentage
+INTO
+    [production-kpi]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue([iothub], '[User].[type]') = 'Telemetry'
+GROUP BY
+    TumblingWindow(minute, 5), IoTHub.ConnectionDeviceId;
+
+SELECT
+    ConnectionDeviceId,
+    CurrentTime,
+    GoodCount,
+    TotalVolume,
+    GoodProductionPercentage
+INTO
+    [lower-production-kpi]
+FROM
+    [production-kpi]
+WHERE
+    GoodProductionPercentage != 0 AND GoodProductionPercentage < 0.90;
+
+
+/*
+Temperature
+*/
+
+SELECT
+    IoTHub.ConnectionDeviceId,
+    System.Timestamp AS CurrentTime,
+    AVG(Temperature) AS AvgTemperature,
+    MIN(Temperature) AS MinTemperature,
+    MAX(Temperature) AS MaxTemperature
+INTO
+    [temperature]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue([iothub], '[User].[type]') = 'Telemetry'
+GROUP BY
+    HoppingWindow(minute, 5, 1), IoTHub.ConnectionDeviceId;
+
+
+/*
+Errors
+*/
+
+SELECT
+    IoTHub.ConnectionDeviceId,
+    System.Timestamp AS CurrentTime
+INTO
+    [lot-errors]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue([iothub], '[User].[type]') = 'DeviceError'
+GROUP BY
+    SlidingWindow(minute, 1), IoTHub.ConnectionDeviceId
+HAVING
+    COUNT(newErrorsCount) > 3
+
+
+SELECT
+    IoTHub.ConnectionDeviceId,
+    System.Timestamp AS CurrentTime
+INTO
+    [emergency-stop]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue([iothub], '[User].[type]') = 'DeviceError'
+GROUP BY
+    SlidingWindow(minute, 1), IoTHub.ConnectionDeviceId
+HAVING
+    COUNT(newErrorsCount) > 3
+
+
+
+SELECT
+    IoTHub.ConnectionDeviceId,
+    deviceError,
+    System.Timestamp AS CurrentTime
+INTO
+    [new-error]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue([iothub], '[User].[type]') = 'DeviceError' AND newErrorsCount > 0
+

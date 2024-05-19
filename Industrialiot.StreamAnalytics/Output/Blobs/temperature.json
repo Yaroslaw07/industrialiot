@@ -1,0 +1,25 @@
+﻿{
+  "Name": "temperature",
+  "DataSourceType": "Blob Storage",
+  "BlobStorageProperties": {
+    "StorageAccounts": [
+      {
+        "AccountName": "industriastore",
+        "AccountKey": null
+      }
+    ],
+    "Container": "temperature",
+    "PathPattern": "",
+    "DateFormat": "yyyy/MM/dd",
+    "TimeFormat": "HH",
+    "AuthenticationMode": "ConnectionString"
+  },
+  "DataSourceCredentialDomain": "1cd347c0-2021-44a4-9730-d81a3b5cf9be.StreamAnalystics",
+  "Serialization": {
+    "Type": "Json",
+    "Encoding": "UTF8",
+    "FieldDelimiter": null,
+    "Format": "LineSeparated"
+  },
+  "ScriptType": "Output"
+}

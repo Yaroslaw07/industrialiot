@@ -4,4 +4,18 @@ This project aims to control and analyze OPC UA devices using Azure products. Th
 
 ![1716123501356](image/README/1716123501356.png)
 
-> scheme of application
+> Scheme of all application
+
+## Main parts
+
+- OPC Server ([link for local development](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.Opc))
+
+- [Agent (c#, .net)](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.Agent)
+
+- Azure IotHub
+
+- [Stream Analytics Job](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.Analytics)
+
+- Blobs and Event hub
+
+- [Azure Function app](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.Functions)

@@ -1,0 +1,21 @@
+﻿{
+  "Name": "emergency-stop",
+  "DataSourceType": "Event Hub",
+  "EventHubProperties": {
+    "ServiceBusNamespace": "industrial-events",
+    "EventHubName": "emergency-stop",
+    "SharedAccessPolicyName": "function",
+    "SharedAccessPolicyKey": null,
+    "AuthenticationMode": null,
+    "PartitionKey": null,
+    "PropertyColumns": []
+  },
+  "DataSourceCredentialDomain": "d7230ce7-192b-40c3-94f0-e14ec0840e2a.StreamAnalystics",
+  "Serialization": {
+    "Type": "Json",
+    "Encoding": "UTF8",
+    "FieldDelimiter": null,
+    "Format": "LineSeparated"
+  },
+  "ScriptType": "Output"
+}
