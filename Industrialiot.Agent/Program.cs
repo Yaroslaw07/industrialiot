@@ -3,8 +3,9 @@ using Industrialiot.Agent.DeviceManagment;
 using Microsoft.Extensions.Configuration;
 
 var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<Program>()
-            .Build();
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appSettings.json", optional: false)
+    .Build();
 
 var opcConnectionString = configuration["OPC_CONNECTION_STRING"];
 var azureConnectionString = configuration["AZURE_IOT_CONNECTION_STRING"];
