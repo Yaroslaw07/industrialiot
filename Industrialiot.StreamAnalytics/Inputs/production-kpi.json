@@ -1,0 +1,27 @@
+{
+    "Name": "production-kpi",
+    "Type": "Data Stream",
+    "DataSourceType": "Blob Storage",
+    "BlobStorageProperties": {
+        "StorageAccounts": [
+            {
+                "AccountName": "industriastore",
+                "AccountKey": null
+            }
+        ],
+        "Container": "production-kpi",
+        "PathPattern": "",
+        "DateFormat": "yyyy/MM/dd",
+        "TimeFormat": "HH",
+        "SourcePartitionCount": 1,
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": "0bc0517c-3b30-4c42-ad20-72dcf7748889.StreamAnalystics",
+    "Serialization": {
+        "Type": "Json",
+        "Encoding": "UTF8"
+    },
+    "PartitionKey": "",
+    "CompressionType": "None",
+    "ScriptType": "Input"
+}

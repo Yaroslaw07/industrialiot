@@ -1,4 +1,4 @@
-﻿/*
+/*
 Production Rate
 */
 
@@ -9,7 +9,7 @@ SELECT
     SUM(GoodCount + BadCount) AS TotalVolume,
     1.0 * SUM(GoodCount) / SUM(GoodCount + BadCount) AS GoodProductionPercentage
 INTO
-    [production-kpi]
+    [kpi-store]
 FROM
     [iothub] TIMESTAMP BY EventEnqueuedUtcTime
 WHERE
@@ -42,7 +42,7 @@ SELECT
     MIN(Temperature) AS MinTemperature,
     MAX(Temperature) AS MaxTemperature
 INTO
-    [temperature]
+    [temperature-store]
 FROM
     [iothub] TIMESTAMP BY EventEnqueuedUtcTime
 WHERE

@@ -1,0 +1,42 @@
+{
+    "name": "production_kpi",
+    "startFile": "Transformation.asaql",
+    "configurations": [
+        {
+            "filePath": "Outputs/lot-errors.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/temperature-store.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Inputs/production-kpi.json",
+            "subType": "Input"
+        },
+        {
+            "filePath": "JobConfig.json",
+            "subType": "JobConfig"
+        },
+        {
+            "filePath": "Outputs/kpi-store.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Inputs/iothub.json",
+            "subType": "Input"
+        },
+        {
+            "filePath": "Outputs/lower-production-kpi.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/emergency-stop.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/new-error.json",
+            "subType": "Output"
+        }
+    ]
+}

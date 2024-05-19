@@ -1,0 +1,19 @@
+{
+    "Name": "lower-production-kpi",
+    "DataSourceType": "Event Hub",
+    "EventHubProperties": {
+        "ServiceBusNamespace": "industrial-events",
+        "EventHubName": "lower-production-kpi",
+        "SharedAccessPolicyName": "production_kpi_lower-production-kpi_policy",
+        "SharedAccessPolicyKey": null,
+        "PropertyColumns": [],
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": "13352266-1c2e-48f5-a3f2-9ff9f3a74fc2.StreamAnalystics",
+    "Serialization": {
+        "Type": "Json",
+        "Encoding": "UTF8",
+        "Format": "LineSeparated"
+    },
+    "ScriptType": "Output"
+}

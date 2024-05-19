@@ -1,0 +1,27 @@
+{
+    "Name": "lot-errors",
+    "DataSourceType": "Blob Storage",
+    "BlobStorageProperties": {
+        "StorageAccounts": [
+            {
+                "AccountName": "industriastore",
+                "AccountKey": null
+            }
+        ],
+        "Container": "lot-errors",
+        "PathPattern": "",
+        "DateFormat": "yyyy/MM/dd",
+        "TimeFormat": "HH",
+        "AuthenticationMode": "ConnectionString",
+        "BlobWriteMode": "Append"
+    },
+    "DataSourceCredentialDomain": "813abb5a-f8e1-4c06-9e78-80f7404ba1c7.StreamAnalystics",
+    "Serialization": {
+        "Type": "Json",
+        "Encoding": "UTF8",
+        "Format": "LineSeparated"
+    },
+    "MinimumRows": null,
+    "MaximumTime": null,
+    "ScriptType": "Output"
+}

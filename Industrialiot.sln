@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Industrialiot.Agent", "Indu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Industrialiot.Functions", "Industrialiot.Functions\Industrialiot.Functions.csproj", "{78C2A2A2-F585-468F-9E3D-101208E45209}"
 EndProject
-Project("{E6C563F2-BDC2-4A24-ACBF-01715157DCBB}") = "Industrialiot.StreamAnalytics", "Industrialiot.StreamAnalytics\Industrialiot.StreamAnalytics.asaproj", "{2C2514D8-A9C0-4184-9B80-A840FD1F8992}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{78C2A2A2-F585-468F-9E3D-101208E45209}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78C2A2A2-F585-468F-9E3D-101208E45209}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78C2A2A2-F585-468F-9E3D-101208E45209}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C2514D8-A9C0-4184-9B80-A840FD1F8992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C2514D8-A9C0-4184-9B80-A840FD1F8992}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C2514D8-A9C0-4184-9B80-A840FD1F8992}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C2514D8-A9C0-4184-9B80-A840FD1F8992}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
