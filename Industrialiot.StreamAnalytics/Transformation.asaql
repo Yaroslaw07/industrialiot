@@ -57,6 +57,17 @@ Errors
 
 SELECT
     IoTHub.ConnectionDeviceId,
+    deviceError,
+    System.Timestamp AS CurrentTime
+INTO
+    [new-error]
+FROM
+    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
+WHERE
+    GetMetadataPropertyValue([iothub], '[User].[type]') = 'DeviceError' AND newErrorsCount > 0
+
+SELECT
+    IoTHub.ConnectionDeviceId,
     System.Timestamp AS CurrentTime
 INTO
     [lot-errors]
@@ -76,24 +87,9 @@ SELECT
 INTO
     [emergency-stop]
 FROM
-    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
-WHERE
-    GetMetadataPropertyValue([iothub], '[User].[type]') = 'DeviceError'
-GROUP BY
-    SlidingWindow(minute, 1), IoTHub.ConnectionDeviceId
-HAVING
-    COUNT(newErrorsCount) > 3
+    [lot-errors-input] TIMESTAMP BY EventEnqueuedUtcTime
 
 
 
-SELECT
-    IoTHub.ConnectionDeviceId,
-    deviceError,
-    System.Timestamp AS CurrentTime
-INTO
-    [new-error]
-FROM
-    [iothub] TIMESTAMP BY EventEnqueuedUtcTime
-WHERE
-    GetMetadataPropertyValue([iothub], '[User].[type]') = 'DeviceError' AND newErrorsCount > 0
+
 

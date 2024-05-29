@@ -1,5 +1,5 @@
 {
-  "Name": "production-kpi",
+  "Name": "lot-errors-input",
   "Type": "Data Stream",
   "DataSourceType": "Blob Storage",
   "BlobStorageProperties": {
@@ -9,14 +9,14 @@
         "AccountKey": null
       }
     ],
-    "Container": "production-kpi",
+    "Container": "lot-errors",
     "PathPattern": "",
     "DateFormat": "yyyy/MM/dd",
     "TimeFormat": "HH",
     "SourcePartitionCount": 1,
     "AuthenticationMode": "ConnectionString"
   },
-  "DataSourceCredentialDomain": "0bc0517c-3b30-4c42-ad20-72dcf7748889.StreamAnalystics",
+  "DataSourceCredentialDomain": "1ac0528d-4d41-5d53-be31-83ecg885999a.StreamAnalystics",
   "Serialization": {
     "Type": "Json",
     "Encoding": "UTF8"

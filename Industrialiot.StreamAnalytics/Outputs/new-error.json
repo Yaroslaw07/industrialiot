@@ -1,19 +1,20 @@
 {
-    "Name": "new-error",
-    "DataSourceType": "Event Hub",
-    "EventHubProperties": {
-        "ServiceBusNamespace": "industrial-events",
-        "EventHubName": "new-error",
-        "SharedAccessPolicyName": "production_kpi_new-error_policy",
-        "SharedAccessPolicyKey": null,
-        "PropertyColumns": [],
-        "AuthenticationMode": "ConnectionString"
-    },
-    "DataSourceCredentialDomain": "c3213804-0a54-4229-b761-4ca83f54f0a9.StreamAnalystics",
-    "Serialization": {
-        "Type": "Json",
-        "Encoding": "UTF8",
-        "Format": "LineSeparated"
-    },
-    "ScriptType": "Output"
+  "Name": "new-error",
+  "DataSourceType": "Event Hub",
+  "EventHubProperties": {
+    "ServiceBusNamespace": "industrial-events",
+    "EventHubName": "new-error",
+    "SharedAccessPolicyName": "production_kpi_new-error_policy",
+    "SharedAccessPolicyKey": null,
+    "PartitionKey": "",
+    "PropertyColumns": [],
+    "AuthenticationMode": "ConnectionString"
+  },
+  "DataSourceCredentialDomain": "c3213804-0a54-4229-b761-4ca83f54f0a9.StreamAnalystics",
+  "Serialization": {
+    "Type": "Json",
+    "Encoding": "UTF8",
+    "Format": "LineSeparated"
+  },
+  "ScriptType": "Output"
 }
