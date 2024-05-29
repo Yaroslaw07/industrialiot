@@ -14,7 +14,7 @@ This project aims to control and analyze OPC UA devices using Azure products. Th
 
 - Azure IotHub
 
-- [Stream Analytics Job](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.Analytics)
+- [Stream Analytics Job](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.StreamAnalytics)
 
 - Blobs and Event hub
 
