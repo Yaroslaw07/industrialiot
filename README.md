@@ -8,7 +8,7 @@ This project aims to control and analyze OPC UA devices using Azure products. Th
 
 ## Main parts
 
-- OPC Server ([link for local development](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.Opc))
+- OPC Server [(local development guide)](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.Opc)
 
 - [Agent (c#, .net)](https://github.com/Yaroslaw07/Industrialiot/tree/master/Industrialiot.Agent)
 
